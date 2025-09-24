@@ -16,7 +16,7 @@ class MyWebsite extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'My Fun Website',
+      title: 'notes anupuda',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorSchemeSeed: Colors.purple,
