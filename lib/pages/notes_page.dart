@@ -5,16 +5,24 @@ import '../widgets/link_card.dart';
 import 'subject_detail_page.dart';
 
 class NotesPage extends StatelessWidget {
-  const NotesPage({super.key});
+  const NotesPage({super.key, this.semesterIndex = 0});
+  final int semesterIndex;
 
   @override
   Widget build(BuildContext context) {
-    final subjectCards = subjectsData.map((s) => LinkItem(
-      title: s.name,
-      subtitle: 'Open units → Drive folders',
-      icon: Icons.menu_book_outlined,
-      isInternal: true,
-    )).toList();
+    final subjects = semestersData.length > semesterIndex
+        ? semestersData[semesterIndex]
+        : <SubjectLinks>[];
+    final subjectCards = subjects
+        .map(
+          (s) => LinkItem(
+            title: s.name,
+            subtitle: 'Open units → Drive folders',
+            icon: Icons.menu_book_outlined,
+            isInternal: true,
+          ),
+        )
+        .toList();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Choose Your Subject')),
@@ -24,14 +32,15 @@ class NotesPage extends StatelessWidget {
           child: MaxWidth(
             child: Column(
               children: [
-                for (int i = 0; i < subjectsData.length; i++) ...[
+                for (int i = 0; i < subjects.length; i++) ...[
                   InkWell(
                     borderRadius: BorderRadius.circular(16),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => SubjectDetailPage(subject: subjectsData[i]),
+                          builder: (_) =>
+                              SubjectDetailPage(subject: subjects[i]),
                         ),
                       );
                     },

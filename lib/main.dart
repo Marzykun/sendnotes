@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rick_roll/pages/about_page.dart';
 import 'pages/home_page.dart';
 import 'pages/about_page.dart';
 import 'pages/links_page.dart';

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/link.dart';
 import '../models/link_item.dart';
+import 'notes_page.dart';
 import '../widgets/link_card.dart';
 
 class LinksPage extends StatelessWidget {
@@ -9,25 +10,24 @@ class LinksPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = <LinkItem>[
-      // Semester links
+      // Semester links (we'll handle navigation manually so we can pass the semester index)
       LinkItem(
         title: 'Semester 1',
-        subtitle: 'Coming soon',
-        icon: Icons.school_outlined,
-        isInternal: false, // no route yet
+        subtitle: 'View subjects & notes',
+        icon: Icons.menu_book_outlined,
+        isInternal: true,
       ),
       LinkItem(
         title: 'Semester 2',
-        subtitle: 'Coming soon',
-        icon: Icons.school_outlined,
-        isInternal: false,
+        subtitle: 'View subjects & notes',
+        icon: Icons.menu_book_outlined,
+        isInternal: true,
       ),
       LinkItem(
         title: 'Semester 3',
         subtitle: 'View subjects & notes',
         icon: Icons.menu_book_outlined,
         isInternal: true,
-        route: '/notes', // <-- existing NotesPage
       ),
       LinkItem(
         title: 'Semester 4',
@@ -78,11 +78,27 @@ class LinksPage extends StatelessWidget {
           child: MaxWidth(
             child: Column(
               children: [
-                for (final i in items) ...[
-                  // If no url/route, just show disabled card
-                  (i.isInternal && i.route != null) || i.url != null
-                      ? LinkCard(item: i)
-                      : _DisabledCard(item: i),
+                for (int idx = 0; idx < items.length; idx++) ...[
+                  // If this is an internal semester link, navigate to NotesPage with index
+                  if (items[idx].isInternal && items[idx].url == null) ...[
+                    InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => NotesPage(semesterIndex: idx),
+                          ),
+                        );
+                      },
+                      child: LinkCard(item: items[idx]),
+                    ),
+                  ] else ...[
+                    // If no url/route, just show disabled card
+                    items[idx].url != null
+                        ? LinkCard(item: items[idx])
+                        : _DisabledCard(item: items[idx]),
+                  ],
                   const SizedBox(height: 12),
                 ],
               ],
@@ -115,25 +131,24 @@ class _DisabledCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(item.title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey,
-                          )),
+                  Text(
+                    item.title,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey,
+                    ),
+                  ),
                   const SizedBox(height: 2),
                   Text(
                     item.subtitle,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey,
-                        ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.grey),
                   ),
                 ],
               ),
             ),
-            const Text(
-              '⏳',
-              style: TextStyle(color: Colors.grey),
-            ),
+            const Text('⏳', style: TextStyle(color: Colors.grey)),
           ],
         ),
       ),
